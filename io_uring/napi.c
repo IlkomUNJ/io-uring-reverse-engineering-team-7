@@ -18,6 +18,7 @@ struct io_napi_entry {
 	struct rcu_head		rcu;
 };
 
+// Mencari entri NAPI berdasarkan ID pada daftar hash
 static struct io_napi_entry *io_napi_hash_find(struct hlist_head *hash_list,
 					       unsigned int napi_id)
 {
@@ -32,12 +33,14 @@ static struct io_napi_entry *io_napi_hash_find(struct hlist_head *hash_list,
 	return NULL;
 }
 
+// Mengonversi waktu dalam bentuk unsigned long ke ktime_t
 static inline ktime_t net_to_ktime(unsigned long t)
 {
 	/* napi approximating usecs, reverse busy_loop_current_time */
 	return ns_to_ktime(t << 10);
 }
 
+// Menambahkan ID NAPI ke dalam konteks IO ring
 int __io_napi_add_id(struct io_ring_ctx *ctx, unsigned int napi_id)
 {
 	struct hlist_head *hash_list;
@@ -81,6 +84,7 @@ int __io_napi_add_id(struct io_ring_ctx *ctx, unsigned int napi_id)
 	return 0;
 }
 
+// Menghapus ID NAPI dari konteks IO ring
 static int __io_napi_del_id(struct io_ring_ctx *ctx, unsigned int napi_id)
 {
 	struct hlist_head *hash_list;
@@ -102,6 +106,7 @@ static int __io_napi_del_id(struct io_ring_ctx *ctx, unsigned int napi_id)
 	return 0;
 }
 
+// Menghapus entri NAPI yang sudah kadaluarsa
 static void __io_napi_remove_stale(struct io_ring_ctx *ctx)
 {
 	struct io_napi_entry *e;
@@ -122,12 +127,14 @@ static void __io_napi_remove_stale(struct io_ring_ctx *ctx)
 	}
 }
 
+// Fungsi untuk menghapus entri NAPI yang kadaluarsa
 static inline void io_napi_remove_stale(struct io_ring_ctx *ctx, bool is_stale)
 {
 	if (is_stale)
 		__io_napi_remove_stale(ctx);
 }
 
+// Memeriksa apakah waktu busy loop telah habis
 static inline bool io_napi_busy_loop_timeout(ktime_t start_time,
 					     ktime_t bp)
 {
@@ -141,6 +148,7 @@ static inline bool io_napi_busy_loop_timeout(ktime_t start_time,
 	return true;
 }
 
+// Memeriksa apakah busy loop seharusnya berakhir
 static bool io_napi_busy_loop_should_end(void *data,
 					 unsigned long start_time)
 {
@@ -157,6 +165,8 @@ static bool io_napi_busy_loop_should_end(void *data,
 	return false;
 }
 
+// Fungsi untuk menjalankan busy loop dengan pelacakan statis
+
 /*
  * never report stale entries
  */
@@ -172,6 +182,7 @@ static bool static_tracking_do_busy_loop(struct io_ring_ctx *ctx,
 	return false;
 }
 
+// Fungsi untuk menjalankan busy loop dengan pelacakan dinamis
 static bool
 dynamic_tracking_do_busy_loop(struct io_ring_ctx *ctx,
 			      bool (*loop_end)(void *, unsigned long),
@@ -191,6 +202,7 @@ dynamic_tracking_do_busy_loop(struct io_ring_ctx *ctx,
 	return is_stale;
 }
 
+// Fungsi utama untuk menjalankan busy loop NAPI
 static inline bool
 __io_napi_do_busy_loop(struct io_ring_ctx *ctx,
 		       bool (*loop_end)(void *, unsigned long),
@@ -201,6 +213,7 @@ __io_napi_do_busy_loop(struct io_ring_ctx *ctx,
 	return dynamic_tracking_do_busy_loop(ctx, loop_end, loop_end_arg);
 }
 
+// Menjalankan blocking busy loop untuk NAPI
 static void io_napi_blocking_busy_loop(struct io_ring_ctx *ctx,
 				       struct io_wait_queue *iowq)
 {
@@ -245,6 +258,8 @@ void io_napi_init(struct io_ring_ctx *ctx)
 	ctx->napi_track_mode = IO_URING_NAPI_TRACKING_INACTIVE;
 }
 
+// Membebaskan alokasi memori NAPI
+
 /*
  * io_napi_free() - Deallocate napi
  * @ctx: pointer to io-uring context structure
@@ -262,6 +277,16 @@ void io_napi_free(struct io_ring_ctx *ctx)
 	}
 	INIT_LIST_HEAD_RCU(&ctx->napi_list);
 }
+
+/*
+ * io_napi_register_napi() - Mendaftarkan NAPI dengan io-uring
+ * @ctx: pointer ke struktur konteks io-uring
+ * @napi: pointer ke struktur io_uring_napi yang berisi konfigurasi NAPI
+ *
+ * Fungsi ini digunakan untuk mendaftarkan NAPI ke dalam konteks io-uring.
+ * Melakukan pengecekan terhadap mode pelacakan NAPI dan memperbarui parameter terkait
+ * seperti busy poll timeout dan preferensi busy poll.
+ */
 
 static int io_napi_register_napi(struct io_ring_ctx *ctx,
 				 struct io_uring_napi *napi)
@@ -287,6 +312,10 @@ static int io_napi_register_napi(struct io_ring_ctx *ctx,
  * @arg: pointer to io_uring_napi structure
  *
  * Register napi in the io-uring context.
+ 
+ * Fungsi ini digunakan untuk mendaftarkan napi dalam konteks io-uring berdasarkan
+ * argumen yang diberikan. Memproses berbagai opcode untuk registrasi dan manajemen ID NAPI statis.
+ */ 
  */
 int io_register_napi(struct io_ring_ctx *ctx, void __user *arg)
 {

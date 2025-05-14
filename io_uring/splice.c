@@ -24,6 +24,15 @@ struct io_splice {
 	struct io_rsrc_node		*rsrc_node;
 };
 
+/*
+ * __io_splice_prep() - Menyiapkan operasi splice
+ * @req: pointer ke struktur io_kiocb yang menyimpan permintaan I/O
+ * @sqe: pointer ke struktur io_uring_sqe yang berisi parameter permintaan
+ *
+ * Fungsi ini mempersiapkan operasi splice, memeriksa keabsahan flag, dan mengatur
+ * parameter terkait panjang dan flag splice.
+ */
+
 static int __io_splice_prep(struct io_kiocb *req,
 			    const struct io_uring_sqe *sqe)
 {
@@ -40,12 +49,28 @@ static int __io_splice_prep(struct io_kiocb *req,
 	return 0;
 }
 
+/*
+ * io_tee_prep() - Menyiapkan operasi tee untuk splice
+ * @req: pointer ke struktur io_kiocb yang menyimpan permintaan I/O
+ * @sqe: pointer ke struktur io_uring_sqe yang berisi parameter permintaan
+ *
+ * Fungsi ini digunakan untuk menyiapkan operasi tee, dengan memeriksa keberadaan offset
+ * untuk input atau output. Jika ada, mengembalikan error.
+ */
 int io_tee_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
 {
 	if (READ_ONCE(sqe->splice_off_in) || READ_ONCE(sqe->off))
 		return -EINVAL;
 	return __io_splice_prep(req, sqe);
 }
+
+/*
+ * io_splice_cleanup() - Membersihkan sumber daya setelah operasi splice
+ * @req: pointer ke struktur io_kiocb yang menyimpan permintaan I/O
+ *
+ * Fungsi ini digunakan untuk membebaskan node sumber daya yang digunakan selama operasi splice
+ * jika ada node yang terkait.
+ */
 
 void io_splice_cleanup(struct io_kiocb *req)
 {
@@ -54,6 +79,16 @@ void io_splice_cleanup(struct io_kiocb *req)
 	if (sp->rsrc_node)
 		io_put_rsrc_node(req->ctx, sp->rsrc_node);
 }
+
+/*
+ * io_splice_get_file() - Mendapatkan file untuk operasi splice
+ * @req: pointer ke struktur io_kiocb yang menyimpan permintaan I/O
+ * @issue_flags: flag yang digunakan untuk issue
+ *
+ * Fungsi ini akan mengembalikan file input untuk operasi splice, tergantung pada flag
+ * SPLICE_F_FD_IN_FIXED. Jika flag tersebut tidak diatur, file diambil secara normal.
+ * Jika flag diatur, maka file diambil melalui node sumber daya.
+ */
 
 static struct file *io_splice_get_file(struct io_kiocb *req,
 				       unsigned int issue_flags)
@@ -77,6 +112,15 @@ static struct file *io_splice_get_file(struct io_kiocb *req,
 	io_ring_submit_unlock(ctx, issue_flags);
 	return file;
 }
+
+/*
+ * io_tee() - Melakukan operasi tee antara dua file
+ * @req: pointer ke struktur io_kiocb yang menyimpan permintaan I/O
+ * @issue_flags: flag yang digunakan untuk issue
+ *
+ * Fungsi ini menjalankan operasi tee yang menyalin data dari file input ke file output.
+ * Jika operasi berhasil, file input dibebaskan setelahnya.
+ */
 
 int io_tee(struct io_kiocb *req, unsigned int issue_flags)
 {
@@ -106,6 +150,15 @@ done:
 	return IOU_OK;
 }
 
+/*
+ * io_splice_prep() - Menyiapkan operasi splice
+ * @req: pointer ke struktur io_kiocb yang menyimpan permintaan I/O
+ * @sqe: pointer ke struktur io_uring_sqe yang berisi parameter permintaan
+ *
+ * Fungsi ini mempersiapkan operasi splice, termasuk pengaturan offset untuk input dan output,
+ * serta memanggil __io_splice_prep untuk validasi lebih lanjut.
+ */
+
 int io_splice_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
 {
 	struct io_splice *sp = io_kiocb_to_cmd(req, struct io_splice);
@@ -115,6 +168,15 @@ int io_splice_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
 	return __io_splice_prep(req, sqe);
 }
 
+/*
+ * io_splice() - Menjalankan operasi splice antara dua file
+ * @req: pointer ke struktur io_kiocb yang menyimpan permintaan I/O
+ * @issue_flags: flag yang digunakan untuk issue
+ *
+ * Fungsi ini melakukan operasi splice yang menyalin data dari file input ke file output
+ * dengan mematuhi panjang yang ditentukan dan mengatur offset untuk input dan output.
+ */
+ 
 int io_splice(struct io_kiocb *req, unsigned int issue_flags)
 {
 	struct io_splice *sp = io_kiocb_to_cmd(req, struct io_splice);
