@@ -79,7 +79,6 @@ The objective of this task is to document all internal data structures defined i
 |                |                     |                                                                    | io_msg_tw_fd_complete       | io_uring/msg_ring.c    | local variable      |
 | io_napi_entry     | io_uring/napi.c  | napi_id, list, timeout, node, rcu                 | io_napi_hash_find           | io_uring/napi.c     | return value                 |
 |                   |                  |                                                   | (multiple unnamed functions) | io_uring/napi.c     | local variable |
-|
 | io_msg         | io_uring/msg_ring.c | file, src_file, tw, user_data, len, cmd, src_fd, dst_fd/cqe_flags, flags | io_msg_ring_prep           | io_uring/msg_ring.c    | function parameter  |
 |                |                   |                                                      | io_msg_ring                 | io_uring/msg_ring.c    | function parameter  |
 |                |                   |                                                      | io_msg_ring_data            | io_uring/msg_ring.c    | local variable      |
@@ -118,7 +117,7 @@ The objective of this task is to document all internal data structures defined i
 | io_close             | io_uring/openclose.c | file, fd, file_slot                                         | io_close_prep                | io_uring/openclose.c   | local variable      |
 |                      |                      |                                                             | io_close                     | io_uring/openclose.c   | local variable      |
 |                      |                      |                                                             | io_close_fixed               | io_uring/openclose.c   | local variable      |
-| io_fixed_install     | io_uring/openclose.c | file, o_flags                                               | (anonymous use)              | io_uring/openclose.c   | local variable      |   
+| io_fixed_install     | io_uring/openclose.c | file, o_flags                                               | (anonymous use)              | io_uring/openclose.c   | local variable      |
 | io_poll_update     | io_uring/poll.c    | file, old_user_data, new_user_data, events, update_events, update_user_data | io_poll_update              | io_uring/poll.c        | local variable      |
 |                    |                    |                                                                  | io_poll_update_prep         | io_uring/poll.c        | local variable      |
 | io_poll_table      | io_uring/poll.c    | pt, req, nr_entries, error, owning, result_mask                 | __io_queue_proc             | io_uring/poll.c        | function parameter  |
@@ -137,36 +136,36 @@ The objective of this task is to document all internal data structures defined i
 |                |                  |                                                            | io_statx                     | io_uring/statx.c       | local variable      |
 |                |                  |                                                            | io_statx_cleanup             | io_uring/statx.c       | local variable      |
 | io_sync        | io_uring/sync.c  | file, len, off, flags, mode                   | io_sync_file_range           | io_uring/sync.c        | local variable      |
-io_tctx_node   | io_uring/tctx.h | ctx_node, task, ctx     | io_ring_exit_work         | io_uring/io_uring.c     | local variable
-|              |                |                          | io_tctx_exit              | io_uring/io_uring.c     | local variable
-|              |                |                          | io_ring_add_tctx_node     | io_uring/io_uring.c     | local variable, return value
-|              |                |                          | io_get_task_ring          | io_uring/io_uring.c     | local variable
-|              |                |                          | io_register_rsrc          | io_uring/register.c     | local variable
-|              |                |                          | io_poll_task_func         | io_uring/cancel.c       | local variable
-|              |                |                          | io_tctx_node_find         | io_uring/tctx.c         | local variable, return value
-|              |                |                          | io_tctx_node_alloc        | io_uring/tctx.c         | return value
-|              |                |                          | io_tctx_node_finish       | io_uring/tctx.c         | function parameter
-|              |                |                          | io_tctx_node_ref          | io_uring/tctx.c         | function parameter
-io_timeout     | io_uring/timeout.c | file, off, target_seq, repeats, list, head, prev | io_timeout_prep               | io_uring/timeout.c       | local variable
-|              |                   |                                                  | io_timeout                    | io_uring/timeout.c       | local variable
-|              |                   |                                                  | io_timeout_fn                 | io_uring/timeout.c       | local variable
-|              |                   |                                                  | io_timeout_complete           | io_uring/timeout.c       | local variable
-|              |                   |                                                  | io_timeout_extract            | io_uring/timeout.c       | return value, local variable
-|              |                   |                                                  | io_timeout_cancel             | io_uring/timeout.c       | local variable
-|              |                   |                                                  | io_timeout_prep             | io_uring/timeout.c       | local variable
-|io_timeout_rem    | io_uring/timeout.c | file, addr, ts, flags, ltimeout       | io_timeout_remove_prep         | io_uring/timeout.c       | local variable
-|                 |                   |                                        | io_timeout_remove              | io_uring/timeout.c       | local variable
+| io_tctx_node | io_uring/tctx.h | ctx_node, task, ctx | io_ring_exit_work | io_uring/io_uring.c | local variable |
+|              |                |                          | io_tctx_exit              | io_uring/io_uring.c     | local variable|
+|              |                |                          | io_ring_add_tctx_node     | io_uring/io_uring.c     | local variable, return value|
+|              |                |                          | io_get_task_ring          | io_uring/io_uring.c     | local variable|
+|              |                |                          | io_register_rsrc          | io_uring/register.c     | local variable|
+|              |                |                          | io_poll_task_func         | io_uring/cancel.c       | local variable|
+|              |                |                          | io_tctx_node_find         | io_uring/tctx.c         | local variable, return value|
+|              |                |                          | io_tctx_node_alloc        | io_uring/tctx.c         | return value|
+|              |                |                          | io_tctx_node_finish       | io_uring/tctx.c         | function parameter|
+|              |                |                          | io_tctx_node_ref          | io_uring/tctx.c         | function parameter|
+| io_timeout | io_uring/timeout.c | file, off, target_seq, repeats, list, head, prev | io_timeout_prep | io_uring/timeout.c | local variable |
+|              |                   |                                                  | io_timeout                    | io_uring/timeout.c       | local variable|
+|              |                   |                                                  | io_timeout_fn                 | io_uring/timeout.c       | local variable|
+|              |                   |                                                  | io_timeout_complete           | io_uring/timeout.c       | local variable|
+|              |                   |                                                  | io_timeout_extract            | io_uring/timeout.c       | return value, local variable|
+|              |                   |                                                  | io_timeout_cancel             | io_uring/timeout.c       | local variable|
+|              |                   |                                                  | io_timeout_prep             | io_uring/timeout.c       | local variable|
+|io_timeout_rem    | io_uring/timeout.c | file, addr, ts, flags, ltimeout       | io_timeout_remove_prep         | io_uring/timeout.c       | local variable|
+|                 |                   |                                        | io_timeout_remove              | io_uring/timeout.c       | local variable|
 |                 |                   |                                        | io_timeout_update              | io_uring/timeout.c       | function parameter (via `tr`)|
-|io_timeout_data     | io_uring/timeout.h | req, timer, ts, mode, flags              | io_timeout_prep               | io_uring/opdef.c         | async_size
-|                   |                    |                                           | io_timeout                    | io_uring/timeout.c       | req->async_data (local var)
-|                   |                    |                                           | io_timeout_fn                 | io_uring/timeout.c       | container_of from hrtimer
-|                   |                    |                                           | io_timeout_complete           | io_uring/timeout.c       | container_of from hrtimer
-|                   |                    |                                           | io_timeout_prep             | io_uring/timeout.c       | hrtimer_setup parameter
-|                   |                    |                                           | io_timeout_get_clock          | io_uring/timeout.c       | function parameter
+|io_timeout_data     | io_uring/timeout.h | req, timer, ts, mode, flags              | io_timeout_prep               | io_uring/opdef.c         | async_size|
+|                   |                    |                                           | io_timeout                    | io_uring/timeout.c       | req->async_data (local var)|
+|                   |                    |                                           | io_timeout_fn                 | io_uring/timeout.c       | container_of from hrtimer|
+|                   |                    |                                           | io_timeout_complete           | io_uring/timeout.c       | container_of from hrtimer|
+|                   |                    |                                           | io_timeout_prep             | io_uring/timeout.c       | hrtimer_setup parameter|
+|                   |                    |                                           | io_timeout_get_clock          | io_uring/timeout.c       | function parameter|
 |                   |                    |                                           | io_link_timeout_fn            | io_uring/timeout.c       | async_data from linked request|
-|io_ftrunc         | io_uring/truncate.c| file, len              | io_ftruncate_prep            | io_uring/truncate.c      | local variable (cast from req)
+|io_ftrunc         | io_uring/truncate.c| file, len              | io_ftruncate_prep            | io_uring/truncate.c      | local variable (cast from req)|
 |                 |                    |                        | io_ftruncate                 | io_uring/truncate.c      | local variable (cast from req)|
-|io_async_cmd      | io_uring/uring_cmd.h | data, vec, sqes                        | io_uring_cmd_complete_inTask | io_uring/uring_cmd.c   | local variable (cast from req->async_data)
+|io_async_cmd      | io_uring/uring_cmd.h | data, vec, sqes                        | io_uring_cmd_complete_inTask | io_uring/uring_cmd.c   | local variable (cast from req->async_data)|
 |                 |                      |                                         | io_uring_cmd_prep_async      | io_uring/uring_cmd.c   | req->async_data|
 |io_waitid         | io_uring/waitid.c  | file, which, upid, options, refs, head, infop, info              | io_waitid_compat_copy_si     | io_uring/waitid.c      | function parameter|
 |                 |                    |                                                                   | io_waitid_* (berbagai fungsi)| io_uring/waitid.c      | local variable (cast from req)|
@@ -176,4 +175,4 @@ io_timeout     | io_uring/timeout.c | file, off, target_seq, repeats, list, head
 |                |                  |                                      |                            |                      | req->async_data|
 |io_zcrx_args      | io_uring/zcrx.c  | req, ifq, sock, nr_skbs                      | zcrx.c                   | zcrx.c             | local variable, external data (arg.data)|
 |io_zcrx_area      | io_uring/zcrx.h  | nia, ifq, user_refs, is_mapped, area_id, pages, freelist, etc.     | zcrx.c                   | zcrx.c             | function parameters, local variables, field in other struct (ifq->area)|
-io_zcrx_ifq       | io_uring/zcrx.h| ctx, area, rq_ring, rqes, rq_entries, dev, netdev, locks, etc.            | zcrx.c                   | |io_zcrx_unmap_area, io_zcrx_map_area, io_zcrx_recv, dll | function arguments, local vars, member of ctx|
+| io_zcrx_ifq | io_uring/zcrx.h | ctx, area, rq_ring, rqes, rq_entries, dev, netdev, locks, etc. | zcrx.c |io_zcrx_unmap_area, io_zcrx_map_area, io_zcrx_recv, dll | function arguments, local vars, member of ctx |
